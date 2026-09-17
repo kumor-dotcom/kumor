@@ -1,104 +1,110 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Kumor Shop</title>
-  <link rel="stylesheet" href="style.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kumor Shop</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
 
-<header>
-  <div class="container header-content">
-    <div class="logo">Kumor Shop</div>
-    <div>🛒</div>
-  </div>
-</header>
+    <header>
+        <div class="container header-content">
+            <div class="logo">Kumor Shop</div>
+            <div>🛒</div>
+        </div>
+    </header>
 
-<section class="hero">
-  <div class="container">
-    <h1>Welcome to Kumor Shop</h1>
-    <p>Quality products at affordable prices.</p>
-  </div>
-</section>
+    <section class="hero">
+        <div class="container">
+            <h1>Welcome to Kumor Shop</h1>
+            <p>Quality products at affordable prices.</p>
+        </div>
+    </section>
 
-<section class="products-section">
-  <div class="container">
-    <h2>Our Product</h2>
-    <div id="products" class="products">Loading...</div>
-  </div>
-</section>
+    <section class="products-section">
+        <div class="container">
+            <h2>Our Product</h2>
+            <div id="products" class="products">Loading...</div>
+        </div>
+    </section>
 
-<div id="productModal" class="modal">
-  <div class="modal-content">
+    <div id="productModal" class="modal">
+        <div class="modal-content">
 
-    <button class="close" onclick="closeProduct()">×</button>
+            <button class="close" onclick="closeProduct()">×</button>
 
-    <img id="modalImage" class="modal-image" src="" alt="Product">
+            <img id="modalImage" class="modal-image" src="" alt="Product">
 
-    <h2 id="modalName"></h2>
+            <h2 id="modalName"></h2>
 
-    <div id="modalPrice" class="price"></div>
+            <div id="modalPrice" class="price"></div>
 
-    <label>Size</label>
-    <select id="sizeSelect">
-      <option value="">Select size</option>
-    </select>
+            <div id="variationOptions">
 
-    <label>Color</label>
-    <select id="colorSelect">
-      <option value="">Select color</option>
-    </select>
+                <label id="sizeLabel">Size</label>
+                <select id="sizeSelect">
+                    <option value="">Select size</option>
+                </select>
 
-    <label>Quantity</label>
-    <div class="quantity">
-      <button onclick="changeQuantity(-1)">−</button>
-      <span id="quantity">1</span>
-      <button onclick="changeQuantity(1)">+</button>
+                <label id="colorLabel">Color</label>
+                <select id="colorSelect">
+                    <option value="">Select color</option>
+                </select>
+
+            </div>
+
+            <label>Quantity</label>
+            <div class="quantity">
+                <button onclick="changeQuantity(-1)">−</button>
+                <span id="quantity">1</span>
+                <button onclick="changeQuantity(1)">+</button>
+            </div>
+
+            <div class="total">
+                Total: <strong id="totalPrice">৳0</strong>
+            </div>
+
+            <button class="buy-button" onclick="openCheckout()">
+                BUY NOW
+            </button>
+
+        </div>
     </div>
 
-    <div class="total">
-      Total: <strong id="totalPrice">৳0</strong>
+    <div id="checkoutModal" class="modal">
+        <div class="modal-content">
+
+            <button class="close" onclick="closeCheckout()">×</button>
+
+            <h2>Place Your Order</h2>
+
+            <div id="checkoutProduct" class="summary"></div>
+
+            <label>Your Name</label>
+            <input id="customerName" type="text" placeholder="Your name">
+
+            <label>Mobile Number</label>
+            <input id="phone" type="tel" placeholder="01XXXXXXXXX">
+
+            <label>District</label>
+            <input id="district" type="text" placeholder="Your district">
+
+            <label>Delivery Address</label>
+            <textarea id="address" placeholder="Your complete delivery address"></textarea>
+
+            <button id="placeOrderButton" class="buy-button" onclick="placeOrder()">
+                PLACE ORDER
+            </button>
+
+            <div id="orderMessage" class="message"></div>
+
+        </div>
     </div>
 
-    <button class="buy-button" onclick="openCheckout()">
-      BUY NOW
-    </button>
-
-  </div>
-</div>
-
-<div id="checkoutModal" class="modal">
-  <div class="modal-content">
-
-    <button class="close" onclick="closeCheckout()">×</button>
-
-    <h2>Place Your Order</h2>
-
-    <div id="checkoutProduct" class="summary"></div>
-
-    <label>Your Name</label>
-    <input id="customerName" type="text" placeholder="Your name">
-
-    <label>Mobile Number</label>
-    <input id="phone" type="tel" placeholder="01XXXXXXXXX">
-
-    <label>District</label>
-    <input id="district" type="text" placeholder="Your district">
-
-    <label>Delivery Address</label>
-    <textarea id="address" placeholder="Your complete delivery address"></textarea>
-
-    <button id="placeOrderButton" class="buy-button" onclick="placeOrder()">
-      PLACE ORDER
-    </button>
-
-    <div id="orderMessage" class="message"></div>
-
-  </div>
-</div>
-
-<script src="script.js"></script>
+    <script src="script.js"></script>
 </body>
+
 </html>

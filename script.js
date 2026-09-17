@@ -1,5 +1,5 @@
 const API_URL =
-    "https://script.google.com/macros/s/AKfycbzxfhVAQbroDcvYVpSaIIHoYSgccGlmDH9gMehLrSoZt80BI13J0ppjH0zyzfJLsygP/exec";
+    "https://script.google.com/macros/s/AKfycbxID1MVj7Slm-5QrFJZfkLJMDZITJgigboLdBDydpYbRImja78Z_0lwCZ6kriIHkMhf-g/exec";
 
 let products = [];
 let currentProduct = null;
@@ -65,7 +65,10 @@ function displayProducts(list) {
     `;
     }).join("");
 }
-
+function hasVariations(product) {
+    return Array.isArray(product.variations) &&
+        product.variations.length > 0;
+}
 function openProduct(productId) {
     currentProduct =
         products.find(
@@ -84,12 +87,21 @@ function openProduct(productId) {
         "৳" + currentProduct.price;
 
     document.getElementById("modalImage").src =
-        currentProduct.image;
+        currentProduct.image || "";
 
     document.getElementById("quantity").textContent = "1";
 
-    loadSizes();
-    loadColors();
+    if (hasVariations(currentProduct)) {
+        document.getElementById("variationOptions").style.display =
+            "block";
+
+        loadSizes();
+        loadColors();
+
+    } else {
+        document.getElementById("variationOptions").style.display =
+            "none";
+    }
 
     document.getElementById("productModal").style.display =
         "block";
@@ -181,11 +193,29 @@ function findSelectedVariation() {
 }
 
 function changeQuantity(change) {
-    const variation = findSelectedVariation();
+    if (!currentProduct) return;
 
-    const maxStock =
-        variation ? Number(variation.stock) : 99;
+    let maxStock = 999999;
 
+    // Product has size/color variations
+    if (hasVariations(currentProduct)) {
+        const variation = findSelectedVariation();
+
+        if (!variation) {
+            alert("Please select size and color first.");
+            return;
+        }
+
+        maxStock = Number(variation.stock);
+
+        if (maxStock <= 0) {
+            alert("This variation is out of stock.");
+            return;
+        }
+    }
+
+    // Product has NO variations
+    // Allow quantity to increase; server will perform final stock check.
     currentQuantity += change;
 
     if (currentQuantity < 1) {
@@ -214,26 +244,38 @@ function updateTotal() {
 }
 
 function openCheckout() {
-    const variation =
-        findSelectedVariation();
 
-    if (!variation) {
-        alert("Please select size and color.");
-        return;
+    if (hasVariations(currentProduct)) {
+
+        const variation =
+            findSelectedVariation();
+
+        if (!variation) {
+            alert("Please select size and color.");
+            return;
+        }
+
+        if (Number(variation.stock) < currentQuantity) {
+            alert("Not enough stock.");
+            return;
+        }
+
+        document.getElementById("checkoutProduct").textContent =
+            currentProduct.name +
+            " / Size: " + variation.size +
+            " / Color: " + variation.color +
+            " / Qty: " + currentQuantity +
+            " / Total: ৳" +
+            (currentProduct.price * currentQuantity);
+
+    } else {
+
+        document.getElementById("checkoutProduct").textContent =
+            currentProduct.name +
+            " / Qty: " + currentQuantity +
+            " / Total: ৳" +
+            (currentProduct.price * currentQuantity);
     }
-
-    if (Number(variation.stock) < currentQuantity) {
-        alert("Not enough stock.");
-        return;
-    }
-
-    document.getElementById("checkoutProduct").textContent =
-        currentProduct.name +
-        " / Size: " + variation.size +
-        " / Color: " + variation.color +
-        " / Qty: " + currentQuantity +
-        " / Total: ৳" +
-        (currentProduct.price * currentQuantity);
 
     document.getElementById("productModal").style.display =
         "none";
@@ -270,12 +312,28 @@ async function placeOrder() {
         return;
     }
 
-    const variation =
-        findSelectedVariation();
+    let variationId = null;
 
-    if (!variation) {
-        alert("Please select size and color.");
-        return;
+    if (hasVariations(currentProduct)) {
+
+        const variation =
+            findSelectedVariation();
+
+        if (!variation) {
+            alert("Please select size and color.");
+            return;
+        }
+
+        if (Number(variation.stock) < currentQuantity) {
+            alert("Not enough stock.");
+            return;
+        }
+
+        variationId = variation.variationId;
+
+    } else {
+
+
     }
 
     button.disabled = true;
@@ -294,7 +352,7 @@ async function placeOrder() {
                     productId:
                         currentProduct.productId,
                     variationId:
-                        variation.variationId,
+                        variationId,
                     quantity:
                         currentQuantity,
                     customerName:
